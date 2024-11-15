@@ -26,21 +26,199 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jPanel3 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        btnCari = new javax.swing.JButton();
+        btnMuat = new javax.swing.JButton();
+        btnSimpan = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txtNama = new javax.swing.JTextField();
+        txtTelpon = new javax.swing.JTextField();
+        cbKategori = new javax.swing.JComboBox<>();
+        btnTambah = new javax.swing.JButton();
+        btnUbah = new javax.swing.JButton();
+        btnHapus = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jLabel5.setText("Masukkan Nama / No Telepon");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(4, 15, 4, 4);
+        jPanel3.add(jLabel5, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 150;
+        gridBagConstraints.insets = new java.awt.Insets(10, 15, 10, 15);
+        jPanel3.add(jTextField3, gridBagConstraints);
+
+        btnCari.setText("Search");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(10, 15, 10, 15);
+        jPanel3.add(btnCari, gridBagConstraints);
+
+        btnMuat.setText("Load");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(10, 15, 10, 15);
+        jPanel3.add(btnMuat, gridBagConstraints);
+
+        btnSimpan.setText("Save");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(10, 15, 10, 15);
+        jPanel3.add(btnSimpan, gridBagConstraints);
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 300));
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTable1.setPreferredSize(new java.awt.Dimension(60, 80));
+        jTable1.setShowGrid(true);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTable1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridheight = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 300;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel3.add(jScrollPane1, gridBagConstraints);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Aplikasi Kontak!!!", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 3, 14))); // NOI18N
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("Nama");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(jLabel2, gridBagConstraints);
+
+        jLabel3.setText("No Telepon");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(jLabel3, gridBagConstraints);
+
+        jLabel4.setText("Kategori");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(jLabel4, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(txtNama, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(txtTelpon, gridBagConstraints);
+
+        cbKategori.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Teman", "Keluarga", "Kerjaan" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(cbKategori, gridBagConstraints);
+
+        btnTambah.setText("Add");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(btnTambah, gridBagConstraints);
+
+        btnUbah.setText("Edit");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(btnUbah, gridBagConstraints);
+
+        btnHapus.setText("Delete");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel2.add(btnHapus, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 586, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 528, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -78,5 +256,23 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCari;
+    private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnMuat;
+    private javax.swing.JButton btnSimpan;
+    private javax.swing.JButton btnTambah;
+    private javax.swing.JButton btnUbah;
+    private javax.swing.JComboBox<String> cbKategori;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField txtNama;
+    private javax.swing.JTextField txtTelpon;
     // End of variables declaration//GEN-END:variables
 }
