@@ -16,7 +16,7 @@ import javax.swing.JFileChooser;
  * @author Saputra
  */
 public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
-
+    // Deklarasi variabel untuk koneksi database dan tabel
     private Connection conn;
     private Statement stmt;
     private ResultSet rs;
@@ -33,12 +33,18 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         loadData();
     }
 
+    /**
+     * Method untuk menginisialisasi tabel dengan kolom yang ditentukan
+     */
     private void setupTable() {
         String[] columns = {"ID", "Nama", "No Telepon", "Kategori"};
         tableModel = new DefaultTableModel(columns, 0);
         jTable1.setModel(tableModel);
     }
 
+    /**
+     * Method untuk memuat data dari database ke tabel
+     */
     private void loadData() {
         try {
             tableModel.getDataVector().removeAllElements();
@@ -140,6 +146,11 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         jPanel3.add(btnMuat, gridBagConstraints);
 
         btnSimpan.setText("Save");
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -313,15 +324,20 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTable1MouseClicked
 
+    /**
+     * Method untuk mencari kontak berdasarkan nama atau nomor telepon
+     */
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
         // TODO add your handling code here:
         try {
+            // Ambil keyword pencarian dan hapus spasi di awal/akhir
             String keyword = jTextField3.getText().trim();
             if (keyword.isEmpty()) {
-                loadData(); // If search field is empty, show all data
+                loadData(); // Jika keyword kosong, tampilkan semua data
                 return;
             }
 
+            // Query pencarian case-insensitive untuk nama dan telepon
             String sql = "SELECT * FROM kontak WHERE " +
                         "LOWER(nama) LIKE LOWER(?) OR " +
                         "LOWER(telepon) LIKE LOWER(?)";
@@ -352,8 +368,12 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnCariActionPerformed
 
+    /**
+     * Method untuk menambah kontak baru
+     */
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         // TODO add your handling code here:
+        // Validasi nomor telepon
         if (!isValidPhoneNumber(txtTelpon.getText())) {
             JOptionPane.showMessageDialog(this, "Nomor telepon tidak valid. Harus berisi angka dan memiliki panjang yang sesuai.");
             return;
@@ -419,10 +439,41 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
     }//GEN-LAST:event_btnHapusActionPerformed
+    /**
+     * Method untuk mengekspor data ke file CSV
+     */
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        // Tampilkan dialog penyimpanan file
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
+        int returnValue = fileChooser.showSaveDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if (!file.getAbsolutePath().endsWith(".csv")) {
+                file = new File(file.getAbsolutePath() + ".csv");
+            }
+            try (PrintWriter pw = new PrintWriter(file)) {
+                for (int i = 0; i < tableModel.getRowCount(); i++) {
+                    for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                        pw.print(tableModel.getValueAt(i, j));
+                        if (j < tableModel.getColumnCount() - 1) {
+                            pw.print(",");
+                        }
+                    }
+                    pw.println();
+                }
+                JOptionPane.showMessageDialog(this, "Data berhasil diekspor ke " + file.getAbsolutePath());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
-
-
+    /**
+     * Method untuk mengimpor data dari file CSV
+     */
     private void btnMuatActionPerformed(java.awt.event.ActionEvent evt) {
+        // Tampilkan dialog pemilihan file
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
         int returnValue = fileChooser.showOpenDialog(this);
@@ -447,32 +498,9 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         }
     }
 
-    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
-        int returnValue = fileChooser.showSaveDialog(this);
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            if (!file.getAbsolutePath().endsWith(".csv")) {
-                file = new File(file.getAbsolutePath() + ".csv");
-            }
-            try (PrintWriter pw = new PrintWriter(file)) {
-                for (int i = 0; i < tableModel.getRowCount(); i++) {
-                    for (int j = 0; j < tableModel.getColumnCount(); j++) {
-                        pw.print(tableModel.getValueAt(i, j));
-                        if (j < tableModel.getColumnCount() - 1) {
-                            pw.print(",");
-                        }
-                    }
-                    pw.println();
-                }
-                JOptionPane.showMessageDialog(this, "Data berhasil diekspor ke " + file.getAbsolutePath());
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-            }
-        }
-    }
-
+    /**
+     * Method untuk membersihkan form input
+     */
     private void clearForm() {
         txtNama.setText("");
         txtTelpon.setText("");
@@ -480,6 +508,9 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
     }
 
     // Add this method to create the table if it doesn't exist
+    /**
+     * Method untuk membuat tabel jika belum ada
+     */
     private void createTableIfNotExists() {
         try {
             Statement stmt = conn.createStatement();
@@ -497,7 +528,13 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Method untuk validasi format nomor telepon
+     * @param phoneNumber nomor telepon yang akan divalidasi
+     * @return true jika format valid, false jika tidak
+     */
     private boolean isValidPhoneNumber(String phoneNumber) {
+        // Validasi: hanya angka, panjang 10-15 digit
         Pattern pattern = Pattern.compile("\\d{10,15}");
         Matcher matcher = pattern.matcher(phoneNumber);
         return matcher.matches();
