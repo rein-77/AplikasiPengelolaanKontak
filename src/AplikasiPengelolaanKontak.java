@@ -3,17 +3,63 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import java.io.*;
+import java.util.regex.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author Saputra
  */
 public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
 
+    private Connection conn;
+    private Statement stmt;
+    private ResultSet rs;
+    private DefaultTableModel tableModel;
+
     /**
      * Creates new form AplikasiPengelolaanKontak
      */
     public AplikasiPengelolaanKontak() {
         initComponents();
+        conn = Koneksi.getKoneksi();
+        setupTable();  // Ensure this is called before loadData()
+        createTableIfNotExists();
+        loadData();
+    }
+
+    private void setupTable() {
+        String[] columns = {"ID", "Nama", "No Telepon", "Kategori"};
+        tableModel = new DefaultTableModel(columns, 0);
+        jTable1.setModel(tableModel);
+    }
+
+    private void loadData() {
+        try {
+            tableModel.getDataVector().removeAllElements();
+            tableModel.fireTableDataChanged();
+
+            stmt = conn.createStatement();
+            String sql = "SELECT * FROM kontak";
+            rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                Object[] data = {
+                    rs.getInt("id"),
+                    rs.getString("nama"),
+                    rs.getString("telepon"),
+                    rs.getString("kategori")
+                };
+                tableModel.addRow(data);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
     }
 
     /**
@@ -34,6 +80,8 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         btnSimpan = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -66,6 +114,11 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         jPanel3.add(jTextField3, gridBagConstraints);
 
         btnCari.setText("Search");
+        btnCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCariActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -74,6 +127,11 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         jPanel3.add(btnCari, gridBagConstraints);
 
         btnMuat.setText("Load");
+        btnMuat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMuatActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -118,6 +176,21 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         gridBagConstraints.ipadx = 300;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         jPanel3.add(jScrollPane1, gridBagConstraints);
+
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(jList1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel3.add(jScrollPane2, gridBagConstraints);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Aplikasi Kontak!!!", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 3, 14))); // NOI18N
         jPanel2.setLayout(new java.awt.GridBagLayout());
@@ -166,6 +239,11 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         jPanel2.add(cbKategori, gridBagConstraints);
 
         btnTambah.setText("Add");
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTambahActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -174,6 +252,11 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         jPanel2.add(btnTambah, gridBagConstraints);
 
         btnUbah.setText("Edit");
+        btnUbah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUbahActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
@@ -182,6 +265,11 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
         jPanel2.add(btnUbah, gridBagConstraints);
 
         btnHapus.setText("Delete");
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
@@ -217,8 +305,203 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-
+        int row = jTable1.getSelectedRow();
+        if (row != -1) {
+            txtNama.setText(jTable1.getValueAt(row, 1).toString());
+            txtTelpon.setText(jTable1.getValueAt(row, 2).toString());
+            cbKategori.setSelectedItem(jTable1.getValueAt(row, 3).toString());
+        }
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
+        // TODO add your handling code here:
+        try {
+            String keyword = jTextField3.getText().trim();
+            if (keyword.isEmpty()) {
+                loadData(); // If search field is empty, show all data
+                return;
+            }
+
+            String sql = "SELECT * FROM kontak WHERE " +
+                        "LOWER(nama) LIKE LOWER(?) OR " +
+                        "LOWER(telepon) LIKE LOWER(?)";
+                        
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            rs = ps.executeQuery();
+
+            tableModel.setRowCount(0); // Clear the table
+
+            while (rs.next()) {
+                Object[] data = {
+                    rs.getInt("id"),
+                    rs.getString("nama"),
+                    rs.getString("telepon"),
+                    rs.getString("kategori")
+                };
+                tableModel.addRow(data);
+            }
+            
+            if (tableModel.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "Data tidak ditemukan");
+                loadData(); // Show all data if no results found
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnCariActionPerformed
+
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+        // TODO add your handling code here:
+        if (!isValidPhoneNumber(txtTelpon.getText())) {
+            JOptionPane.showMessageDialog(this, "Nomor telepon tidak valid. Harus berisi angka dan memiliki panjang yang sesuai.");
+            return;
+        }
+        try {
+            String sql = "INSERT INTO kontak (nama, telepon, kategori) VALUES (?,?,?)";
+            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, txtNama.getText());
+            ps.setString(2, txtTelpon.getText());
+            ps.setString(3, cbKategori.getSelectedItem().toString());
+            ps.executeUpdate();
+            loadData();
+            clearForm();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnTambahActionPerformed
+
+    private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
+        // TODO add your handling code here:
+                int row = jTable1.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang akan diubah");
+            return;
+        }
+        if (!isValidPhoneNumber(txtTelpon.getText())) {
+            JOptionPane.showMessageDialog(this, "Nomor telepon tidak valid. Harus berisi angka dan memiliki panjang yang sesuai.");
+            return;
+        }
+        try {
+            int id = (int) jTable1.getValueAt(row, 0);
+            String sql = "UPDATE kontak SET nama=?, telepon=?, kategori=? WHERE id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, txtNama.getText());
+            ps.setString(2, txtTelpon.getText());
+            ps.setString(3, cbKategori.getSelectedItem().toString());
+            ps.setInt(4, id);
+            ps.executeUpdate();
+            loadData();
+            clearForm();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnUbahActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        // TODO add your handling code here:
+                int row = jTable1.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus");
+            return;
+        }
+
+        try {
+            int id = (int) jTable1.getValueAt(row, 0);
+            String sql = "DELETE FROM kontak WHERE id=?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            loadData();
+            clearForm();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnHapusActionPerformed
+
+
+
+    private void btnMuatActionPerformed(java.awt.event.ActionEvent evt) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
+        int returnValue = fileChooser.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] values = line.split(",");
+                    String sql = "INSERT INTO kontak (nama, telepon, kategori) VALUES (?,?,?)";
+                    PreparedStatement ps = conn.prepareStatement(sql);
+                    ps.setString(1, values[1]);
+                    ps.setString(2, values[2]);
+                    ps.setString(3, values[3]);
+                    ps.executeUpdate();
+                }
+                loadData();
+                JOptionPane.showMessageDialog(this, "Data berhasil diimpor dari " + file.getAbsolutePath());
+            } catch (IOException | SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        }
+    }
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
+        int returnValue = fileChooser.showSaveDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if (!file.getAbsolutePath().endsWith(".csv")) {
+                file = new File(file.getAbsolutePath() + ".csv");
+            }
+            try (PrintWriter pw = new PrintWriter(file)) {
+                for (int i = 0; i < tableModel.getRowCount(); i++) {
+                    for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                        pw.print(tableModel.getValueAt(i, j));
+                        if (j < tableModel.getColumnCount() - 1) {
+                            pw.print(",");
+                        }
+                    }
+                    pw.println();
+                }
+                JOptionPane.showMessageDialog(this, "Data berhasil diekspor ke " + file.getAbsolutePath());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        }
+    }
+
+    private void clearForm() {
+        txtNama.setText("");
+        txtTelpon.setText("");
+        cbKategori.setSelectedIndex(0);
+    }
+
+    // Add this method to create the table if it doesn't exist
+    private void createTableIfNotExists() {
+        try {
+            Statement stmt = conn.createStatement();
+            String sql = """
+                CREATE TABLE IF NOT EXISTS kontak (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nama TEXT NOT NULL,
+                    telepon TEXT NOT NULL,
+                    kategori TEXT NOT NULL
+                )
+                """;
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error creating table: " + e.getMessage());
+        }
+    }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        Pattern pattern = Pattern.compile("\\d{10,15}");
+        Matcher matcher = pattern.matcher(phoneNumber);
+        return matcher.matches();
+    }
 
     /**
      * @param args the command line arguments
@@ -267,9 +550,11 @@ public class AplikasiPengelolaanKontak extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField txtNama;
